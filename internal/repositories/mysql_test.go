@@ -31,6 +31,8 @@ func TestMysql_CreateUser(t *testing.T) {
 	mysqL := NewMysql(connect)
 	userData := entities.User{
 		Name:      "test",
+		Email:     "local@email.com",
+		Password:  "some randompasswr",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -58,5 +60,62 @@ func TestMysql_GetAllUsers(t *testing.T) {
 	log.Println(users)
 
 	assert.Greater(t, len(users), 1)
+
+}
+
+func TestMysql_GetUser(t *testing.T) {
+
+	connect, err := DbConnect("avnadmin", "AVNS_ZT_X586MDd1cQPJueei", "mysql-3ca6f9a1-shubhamdixit863-a24d.aivencloud.com", "14287", "defaultdb")
+
+	assert.Nil(t, err)
+	assert.NotNil(t, connect)
+
+	err = connect.AutoMigrate(&entities.User{})
+	assert.Nil(t, err)
+
+	mysqL := NewMysql(connect)
+
+	user, err := mysqL.GetUser(3)
+	assert.Nil(t, err)
+	assert.Equal(t, "shubham", user.Name)
+
+}
+
+func TestMysql_UpdateUser(t *testing.T) {
+	connect, err := DbConnect("avnadmin", "AVNS_ZT_X586MDd1cQPJueei", "mysql-3ca6f9a1-shubhamdixit863-a24d.aivencloud.com", "14287", "defaultdb")
+
+	assert.Nil(t, err)
+	assert.NotNil(t, connect)
+
+	err = connect.AutoMigrate(&entities.User{})
+	assert.Nil(t, err)
+
+	// Here we will test our method
+	mysqL := NewMysql(connect)
+	userData := entities.User{
+		Name:      "john test",
+		ID:        3,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+	err = mysqL.UpdateUser(userData)
+	assert.Nil(t, err)
+
+}
+
+func TestMysql_DeleteUser(t *testing.T) {
+
+	connect, err := DbConnect("avnadmin", "AVNS_ZT_X586MDd1cQPJueei", "mysql-3ca6f9a1-shubhamdixit863-a24d.aivencloud.com", "14287", "defaultdb")
+
+	assert.Nil(t, err)
+	assert.NotNil(t, connect)
+
+	err = connect.AutoMigrate(&entities.User{})
+	assert.Nil(t, err)
+
+	mysqL := NewMysql(connect)
+
+	err = mysqL.DeleteUser(3)
+	assert.Nil(t, err)
 
 }

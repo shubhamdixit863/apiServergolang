@@ -53,7 +53,9 @@ func main() {
 	mysql := repositories.NewMysql(dbObject)
 	authService := services.NewAuthService(mysql)                // dependency injection
 	authController := controllers.NewAuthController(authService) // dependency injection
-	app.Get("/", authController.Signup)
+	app.Post("/user", authController.Signup)
+
+	app.Get("/user", authController.ListUsers)
 
 	err = app.Listen(":3000")
 	if err != nil {

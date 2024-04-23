@@ -11,6 +11,17 @@ type mysql struct {
 	db *gorm.DB
 }
 
+func (m mysql) GetUserByUserName(userName string) (entities.User, error) {
+	var user entities.User
+
+	tx := m.db.First(&user, "email = ?", userName)
+	if tx.Error != nil {
+		return user, tx.Error
+	}
+
+	return user, nil
+}
+
 func (m mysql) GetUser(userId uint) (entities.User, error) {
 	var user entities.User
 	user.ID = userId

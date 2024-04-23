@@ -4,3 +4,4 @@ db:
   DB_HOST: mysql-3ca6f9a1-shubhamdixit863-a24d.aivencloud.com
   DB_PORT: 14287
   DB_NAME: defaultdb
+secretKey: secretSecret

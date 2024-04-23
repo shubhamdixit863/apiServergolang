@@ -44,3 +44,23 @@ func (ac *AuthController) ListUsers(c fiber.Ctx) error {
 	return c.JSON(dto.SuccessResponse("user created successfully", users))
 
 }
+
+func (ac *AuthController) SignIn(c fiber.Ctx) error {
+	// we will be receiving the json data
+	var signInRequest dto.SignInRequest
+	err := c.Bind().Body(&signInRequest)
+
+	if err != nil {
+		return c.JSON(dto.ErrorResponse(err, nil))
+	}
+
+	// We wil call the service
+
+	token, err := ac.service.GetUserByEmail(signInRequest)
+	if err != nil {
+		return c.JSON(dto.ErrorResponse(err.Error(), nil))
+
+	}
+	return c.JSON(dto.SuccessResponse("user logged in successfully", token))
+
+}

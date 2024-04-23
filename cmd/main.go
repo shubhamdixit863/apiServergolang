@@ -9,6 +9,7 @@ import (
 	"log"
 
 	"apiServer/internal/controllers"
+	"apiServer/internal/middlewares"
 	"apiServer/internal/repositories"
 	"apiServer/internal/services"
 )
@@ -55,6 +56,9 @@ func main() {
 	authController := controllers.NewAuthController(authService) // dependency injection
 	app.Post("/user", authController.Signup)
 
+	app.Post("/login", authController.SignIn)
+
+	app.Use(middlewares.AuthorizedRequest())
 	app.Get("/user", authController.ListUsers)
 
 	err = app.Listen(":3000")

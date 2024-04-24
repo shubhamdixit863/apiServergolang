@@ -61,6 +61,10 @@ func main() {
 	app.Use(middlewares.AuthorizedRequest())
 	app.Get("/user", authController.ListUsers)
 
+	app.Get("/user/:id", authController.GetUserById)
+	app.Delete("/user/:id", authController.DeleteUserById)
+	app.Put("/user/:id", authController.UpdateUser)
+
 	err = app.Listen(":3000")
 	if err != nil {
 		log.Fatal("error starting the server")

@@ -20,7 +20,7 @@ func AuthorizedRequest() fiber.Handler {
 
 		var mySigningKey = []byte(viper.GetString("secretKey"))
 
-		parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		_, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("there was an error in parsing")
 			}
@@ -31,13 +31,16 @@ func AuthorizedRequest() fiber.Handler {
 			return c.JSON(dto.ErrorResponse("invalid token", err.Error()))
 		}
 
-		if _, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
+		/*
+			if _, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
 
-			// check for role based access and all
-			return nil
-		}
+				// check for role based access and all
+				return nil
+			}
 
-		return nil
+		*/
+
+		return c.Next()
 
 	}
 }

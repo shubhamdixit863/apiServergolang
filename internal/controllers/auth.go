@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/gofiber/fiber/v3"
+	"log"
 
 	"apiServer/internal/dto"
 	"apiServer/internal/services"
@@ -62,5 +63,49 @@ func (ac *AuthController) SignIn(c fiber.Ctx) error {
 
 	}
 	return c.JSON(dto.SuccessResponse("user logged in successfully", token))
+
+}
+
+func (ac *AuthController) UpdateUser(c fiber.Ctx) error {
+	// we will be receiving the json data
+	var signupRequest dto.SignupRequest
+	id := c.Params("id")
+	err := c.Bind().Body(&signupRequest)
+	if err != nil {
+		return err
+	}
+
+	user, err := ac.service.UpdateUser(signupRequest, id)
+	if err != nil {
+		return c.JSON(dto.ErrorResponse(err, nil))
+	}
+	return c.JSON(dto.SuccessResponse("user updated successfully", user))
+
+}
+
+func (ac *AuthController) GetUserById(c fiber.Ctx) error {
+	// we will be receiving the json data
+	id := c.Params("id")
+
+	byId, err := ac.service.GetUserById(id)
+	if err != nil {
+		return c.JSON(dto.ErrorResponse(err.Error(), nil))
+	}
+	log.Println(byId)
+
+	return c.JSON(dto.SuccessResponse("user created successfully", byId))
+
+}
+
+func (ac *AuthController) DeleteUserById(c fiber.Ctx) error {
+	// we will be receiving the json data
+	id := c.Params("id")
+
+	err := ac.service.DeleteUser(id)
+	if err != nil {
+		return c.JSON(dto.ErrorResponse(err.Error(), nil))
+	}
+
+	return c.JSON(dto.SuccessResponse("user Deleted successfully", nil))
 
 }

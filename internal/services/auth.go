@@ -3,6 +3,9 @@ package services
 import (
 	"errors"
 	"fmt"
+	"log"
+	"strconv"
+	"time"
 
 	"apiServer/internal/dto"
 	"apiServer/internal/entities"
@@ -14,10 +17,51 @@ type AuthService interface {
 	CreateUser(signupRequest dto.SignupRequest) (uint, error)
 	ListUsers() ([]dto.UserData, error)
 	GetUserByEmail(request dto.SignInRequest) (string, error)
+	GetUserById(id string) (dto.UserData, error)
+	UpdateUser(signupRequest dto.SignupRequest, id string) (uint, error)
+	DeleteUser(id string) error
 }
 
 type authService struct {
 	repository repositories.Repository
+}
+
+func (a authService) DeleteUser(id string) error {
+	atoi, err := strconv.Atoi(id)
+	if err != nil {
+		return err
+	}
+	err = a.repository.DeleteUser(uint(atoi))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a authService) UpdateUser(signupRequest dto.SignupRequest, id string) (uint, error) {
+
+	atoi, err := strconv.Atoi(id)
+	if err != nil {
+		return 0, err
+	}
+	var updateUser entities.User
+	updateUser.Name = signupRequest.Name
+	updateUser.Email = signupRequest.Email
+	updateUser.ID = uint(atoi)
+	updateUser.UpdatedAt = time.Now()
+	updateUser.CreatedAt = time.Now()
+	password, err := utils.GeneratehashPassword(signupRequest.Password)
+	if err != nil {
+		return 0, err
+	}
+	updateUser.Password = password
+
+	err = a.repository.UpdateUser(updateUser)
+	if err != nil {
+		return 0, err
+	}
+	return updateUser.ID, nil
 }
 
 func (a authService) GetUserByEmail(request dto.SignInRequest) (string, error) {
@@ -87,4 +131,25 @@ func (a authService) CreateUser(signupRequest dto.SignupRequest) (uint, error) {
 
 func NewAuthService(repository repositories.Repository) AuthService {
 	return &authService{repository}
+}
+
+func (a authService) GetUserById(id string) (dto.UserData, error) {
+	// type conversions
+	var userData dto.UserData
+	atoi, err := strconv.Atoi(id)
+	if err != nil {
+		return userData, err
+	}
+
+	user, err := a.repository.GetUser(uint(atoi))
+	if err != nil {
+		return userData, err
+	}
+
+	log.Println(user)
+
+	userData.Id = user.ID
+	userData.Name = user.Name
+	userData.Email = user.Email
+	return userData, nil
 }

@@ -42,7 +42,7 @@ func (ac *AuthController) ListUsers(c fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(dto.ErrorResponse(err, nil))
 	}
-	return c.JSON(dto.SuccessResponse("user created successfully", users))
+	return c.JSON(dto.SuccessResponse("users fetched successfully", users))
 
 }
 

@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: webapp-api
+spec:
+  selector:
+    matchLabels:
+      app: webapp-api
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: webapp-api
+    spec:
+      containers:
+        - name: webapp-api
+          image: shubhamdixit863/apiservergolangtest:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-api-service
+spec:
+  #This defines which pods are going to be represented by this service
+  # the service becomes a network endpoint for either or other services
+  # or maybe external users to connect to eg browser
+  selector:
+    app: webapp-api   # the pod label we want to create service for
+
+
+  ports:
+    - name: http #just a label
+      port: 80   #internal port of the cluster in which pod is running
+      nodePort:  30000   # only be user when type is NodePort should be greater than 30000
+
+  type: NodePort
+
+

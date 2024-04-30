@@ -9,6 +9,7 @@ import (
 	"log"
 
 	"apiServer/internal/controllers"
+	"apiServer/internal/dto"
 	"apiServer/internal/middlewares"
 	"apiServer/internal/repositories"
 	"apiServer/internal/services"
@@ -54,6 +55,10 @@ func main() {
 	mysql := repositories.NewMysql(dbObject)
 	authService := services.NewAuthService(mysql)                // dependency injection
 	authController := controllers.NewAuthController(authService) // dependency injection
+
+	app.Get("/healthcheck", func(ctx fiber.Ctx) error {
+		return ctx.JSON(dto.SuccessResponse("success", nil))
+	})
 	app.Post("/user", authController.Signup)
 
 	app.Post("/login", authController.SignIn)

@@ -33,12 +33,12 @@ spec:
   selector:
     app: webapp-api   # the pod label we want to create service for
 
-
   ports:
     - name: http #just a label
-      port: 80   #internal port of the cluster in which pod is running
+      port: 3000   #internal port of the cluster in which pod is running
       nodePort:  30000   # only be user when type is NodePort should be greater than 30000
 
   type: NodePort
 
+#kubectl port-forward service/webapp-api-service 8080:3000  ,now you can access the service outside the cluster on your host machine
 
